@@ -138,12 +138,12 @@ before automating it.**
 
 Tick a phase when all of its steps are done.
 
-- [ ] **Phase 0** — Preparation & Environment
-- [ ] **Phase 1** — Prove the desktop by hand *(highest risk — do first)*
-- [ ] **Phase 2** — Declarify into Home Manager
-- [ ] **Phase 3** — Build the custom base ISO
-- [ ] **Phase 4** — Wire the installer
-- [ ] **Phase 5** — Hardening & daily-driver polish
+- [x] **Phase 0** — Preparation & Environment
+- [x] **Phase 1** — Prove the desktop by hand *(highest risk — do first)*
+- [x] **Phase 2** — Declarify into Home Manager
+- [x] **Phase 3** — Build the custom base ISO
+- [x] **Phase 4** — Wire the installer
+- [x] **Phase 5** — Hardening & daily-driver polish
 - [ ] **Phase 6** — Distribution & docs
 
 ---

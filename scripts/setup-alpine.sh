@@ -93,6 +93,9 @@ echo "LANG=en_US.UTF-8" > "$TARGET/etc/locale.conf"
 chroot "$TARGET" /bin/sh -c "rc-update add seatd default"
 chroot "$TARGET" /bin/sh -c "rc-update add greetd default"
 chroot "$TARGET" /bin/sh -c "rc-update add NetworkManager default"
+chroot "$TARGET" /bin/sh -c "rc-update add elogind default"
+chroot "$TARGET" /bin/sh -c "rc-update add acpid default"
+chroot "$TARGET" /bin/sh -c "rc-update add bluetooth default"
 
 # Configure greetd to use tuigreet
 cat > "$TARGET/etc/greetd/config.toml" <<EOF
@@ -115,8 +118,13 @@ chroot "$TARGET" /bin/sh -c "addgroup $USERNAME audio"
 chroot "$TARGET" /bin/sh -c "addgroup $USERNAME input"
 chroot "$TARGET" /bin/sh -c "addgroup $USERNAME seat"
 
-# Enable wheel group in doas
+# Configure doas
+mkdir -p "$TARGET/etc/doas.d"
 echo "permit :wheel" > "$TARGET/etc/doas.d/doas.conf"
+
+# Configure GRUB with Wayland-friendly kernel parameters
+chroot "$TARGET" /bin/sh -c "sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"systemd.show_status=0 loglevel=3 /' /etc/default/grub"
+chroot "$TARGET" /bin/sh -c "grub-mkconfig -o /boot/grub/grub.cfg"
 
 # Unmount
 umount "$TARGET/run"

@@ -125,6 +125,8 @@ rc_add elogind default      # login/session manager
 rc_add networking default   # basic networking
 rc_add NetworkManager default
 rc_add greetd default       # graphical login
+rc_add acpid default        # power management (ACPI events)
+rc_add bluetooth default    # bluetooth support
 
 # shutdown: clean teardown
 rc_add mount-ro shutdown

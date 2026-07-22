@@ -31,7 +31,7 @@ profile_dusk() {
 		wayland-protocols wayland-utils
 
 		# audio
-		pipewire wireplumber
+		pipewire wireplumber alsa-utils
 
 		# display manager
 		greetd greetd-tuigreet
@@ -42,6 +42,12 @@ profile_dusk() {
 		# firmware
 		linux-firmware linux-firmware-none
 
+		# power management
+		acpid brightnessctl
+
+		# bluetooth
+		bluez bluez-openrc
+
 		# ISO build essentials (installer)
 		alpine-conf setup-disk
 
@@ -49,6 +55,6 @@ profile_dusk() {
 		pciutils usbutils htop
 		"
 
-	# Boot config: quiet + modules needed for loop/squashfs
-	initfs_cmdline="modules=loop,squashfs,sd-mod,usb-storage quiet"
+	# Boot config: Wayland-friendly + modules needed for loop/squashfs
+	initfs_cmdline="modules=loop,squashfs,sd-mod,usb-storage quiet systemd.show_status=0 loglevel=3"
 }
