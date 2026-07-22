@@ -35,6 +35,21 @@ for cmd in abuild xorriso fakeroot mksquashfs; do
     }
 done
 
+# ─── ensure an abuild signing key exists ────────────────
+# mkimage.sh signs the ISO's local boot repository (APKINDEX) via
+# abuild-sign, which requires PACKAGER_PRIVKEY. mkimage.sh also installs
+# the matching .pub key into the ISO so that repo is trusted at boot.
+# Generate a key if none is already configured (don't clobber an existing one).
+for _conf in /etc/abuild.conf "${ABUILD_CONF:-$HOME/.config/abuild/abuild.conf}"; do
+    if [ -f "$_conf" ]; then
+        . "$_conf"
+    fi
+done
+if [ -z "$PACKAGER_PRIVKEY" ]; then
+    echo "No abuild signing key configured — generating one (non-interactive)..."
+    abuild-keygen -a -n
+fi
+
 # ─── clone aports if needed ─────────────────────────────
 if [ ! -d "$APORTS_DIR/scripts" ]; then
     echo "Cloning Alpine aports..."
@@ -55,10 +70,10 @@ cd "$APORTS_DIR"
 
 # The mkimage.sh command:
 #   --profile dusk   → use profile_dusk() from mkimg.dusk.sh
-#   --apkovl         → generate overlay via genapkovl-dusk.sh
-#   --host           → hostname baked into the overlay
+#                      (apkovl + hostname are set inside the profile)
+#   --tag edge       → build against Alpine edge
 #   --arch x86_64    → target architecture
-#   --repository     → package repos (edge/main + edge/community for latest)
+#   --repository     → package repos (edge main/community/testing)
 #   --outdir         → where to put the resulting ISO
 
 ./scripts/mkimage.sh \
