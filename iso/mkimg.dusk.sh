@@ -21,6 +21,10 @@ profile_dusk() {
 	kernel_flavors="lts"
 	kernel_addons=
 
+	# Don't sign the kernel module loop (avoids needing $PACKAGER_PRIVKEY).
+	# Signing is only required for official / Secure-Boot Alpine images.
+	modloop_sign=no
+
 	# Base packages beyond standard Alpine
 	apks="$apks
 		# core tools
