@@ -30,6 +30,8 @@ jobs:
           fakeroot
           squashfs-tools
           mkinitfs
+          grub
+          mtools
           git
           bash
           coreutils
