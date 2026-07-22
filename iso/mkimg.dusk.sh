@@ -13,8 +13,10 @@ profile_dusk() {
 	arch="x86_64"
 	output_format="iso"
 	
-	# Overlay script and hostname (set as variables, not CLI args)
-	apkovl="genapkovl-dusk.sh"
+	# Overlay script + hostname (set as variables, not CLI args).
+	# apkovl path is relative to the aports root (the CWD when mkimage runs),
+	# where build.sh installs this script under scripts/.
+	apkovl="scripts/genapkovl-dusk.sh"
 	hostname="dusklinux"
 
 	# LTS kernel — stable, well-supported

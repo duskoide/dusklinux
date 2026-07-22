@@ -15,6 +15,7 @@ makefile() {
 	OWNER="$1"
 	PERMS="$2"
 	FILENAME="$3"
+	mkdir -p "$(dirname "$FILENAME")"
 	cat > "$FILENAME"
 	chown "$OWNER" "$FILENAME"
 	chmod "$PERMS" "$FILENAME"
