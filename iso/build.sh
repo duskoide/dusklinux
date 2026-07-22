@@ -10,7 +10,7 @@
 #
 # The hostname defaults to "dusklinux".
 #
-# Output: dusklinux-<date>-x86_64.iso in the project root.
+# Output: result/dusklinux.iso under the project root.
 
 set -e
 
@@ -18,7 +18,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 HOSTNAME="${1:-dusklinux}"
 APORTS_DIR="${APORTS_DIR:-/tmp/aports}"
-OUTDIR="${OUTDIR:-$PROJECT_ROOT}"
+OUTDIR="${OUTDIR:-$PROJECT_ROOT/result}"
+mkdir -p "$OUTDIR"
 
 # ─── sanity checks ──────────────────────────────────────
 command -v apk >/dev/null 2>&1 || {
@@ -85,7 +86,17 @@ cd "$APORTS_DIR"
     --repository "https://dl-cdn.alpinelinux.org/alpine/edge/community" \
     --repository "https://dl-cdn.alpinelinux.org/alpine/edge/testing"
 
+# ─── normalize the output name ──────────────────────────
+# mkimage names the ISO alpine-<profile>-<tag>-<arch>.iso. Expose a stable
+# name (dusklinux.iso) for the CI artifact and downstream tooling.
+_iso="$(ls "$OUTDIR"/alpine-dusk-*.iso 2>/dev/null | head -n1)"
+if [ -z "$_iso" ]; then
+    echo "ERROR: no ISO was produced in $OUTDIR" >&2
+    exit 1
+fi
+cp "$_iso" "$OUTDIR/dusklinux.iso"
+
 echo
 echo "=== dusklinux ISO built ==="
-echo "Output: $OUTDIR/$HOSTNAME-*.iso"
+echo "Output: $OUTDIR/dusklinux.iso"
 echo "Boot this in a VM (virtio-gpu, ≥2 vCPU, ≥4GB RAM) to test."
