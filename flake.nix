@@ -10,9 +10,9 @@
     };
 
     # niri: scrollable-tiling Wayland compositor.
-    # Using the upstream flake for latest builds + the community HM module.
+    # Using sodiboo/niri-flake for the Home Manager module.
     niri = {
-      url = "github:niri-wm/niri";
+      url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -53,8 +53,8 @@
         modules = [
           ./home/home.nix
           ./home/shell.nix
-          niri.homeManagerModules.default
-          dms.homeManagerModules.default
+          niri.homeModules.niri
+          dms.homeModules.default
         ];
       };
     };
