@@ -31,7 +31,7 @@ jobs:
       shell: alpine.sh {0}
       run: |
         cd $GITHUB_WORKSPACE
-        ./scripts/build-iso.sh
+        ./iso/build.sh
 
     - name: Verify ISO
       shell: alpine.sh {0}

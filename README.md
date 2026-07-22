@@ -28,7 +28,7 @@ git clone <this-repo>
 cd dusklinux
 
 # Build the ISO
-./scripts/build-iso.sh
+./iso/build.sh
 
 # The ISO will be in ./result/
 ```

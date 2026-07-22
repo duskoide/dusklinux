@@ -23,7 +23,7 @@ cd dusklinux
 ### 2. Run the Build Script
 
 ```bash
-./scripts/build-iso.sh
+./iso/build.sh
 ```
 
 The build script will:
