@@ -38,7 +38,7 @@ profile_dusk() {
 		linux-firmware linux-firmware-none
 		acpid brightnessctl
 		bluez bluez-openrc
-		alpine-conf setup-disk
+		alpine-conf
 		pciutils usbutils htop
 		"
 
