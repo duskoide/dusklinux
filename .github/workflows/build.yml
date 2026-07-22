@@ -23,6 +23,9 @@ jobs:
         packages: >
           alpine-conf
           abuild
+          xorriso
+          fakeroot
+          squashfs-tools
           mkinitfs
           git
           bash
