@@ -19,7 +19,10 @@ jobs:
     - name: Set up Alpine Linux
       uses: jirutka/setup-alpine@v1
       with:
-        branch: v3.20
+        # Must be edge to match the aports `master` scripts that build.sh
+        # clones — v3.20's update-kernel lacks --cache-dir used by edge's
+        # mkimg.base.sh, causing "unrecognized option: cache-dir".
+        branch: edge
         packages: >
           alpine-conf
           abuild
