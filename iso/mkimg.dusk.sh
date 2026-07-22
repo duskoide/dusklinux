@@ -27,39 +27,18 @@ profile_dusk() {
 
 	# Base packages beyond standard Alpine
 	apks="$apks
-		# core tools
 		coreutils doas git curl sudo nano
 		networkmanager network-manager-applet
-
-		# seat/session management (required for Wayland)
 		seatd elogind polkit-elogind
-
-		# GPU / Wayland / input
 		mesa mesa-dri-gallium eudev libinput
 		wayland-protocols wayland-utils
-
-		# audio
 		pipewire wireplumber alsa-utils
-
-		# display manager
 		greetd greetd-tuigreet
-
-		# fonts (needed for readable UI)
 		font-noto font-noto-emoji font-dejavu
-
-		# firmware
 		linux-firmware linux-firmware-none
-
-		# power management
 		acpid brightnessctl
-
-		# bluetooth
 		bluez bluez-openrc
-
-		# ISO build essentials (installer)
 		alpine-conf setup-disk
-
-		# useful extras
 		pciutils usbutils htop
 		"
 
