@@ -1,0 +1,62 @@
+name: Build dusklinux ISO
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Alpine Linux
+      uses: jirutka/setup-alpine@v1
+      with:
+        branch: v3.20
+        packages: >
+          alpine-conf
+          mkinitfs
+          git
+          bash
+          coreutils
+
+    - name: Build ISO
+      shell: alpine.sh {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        ./scripts/build-iso.sh
+
+    - name: Verify ISO
+      shell: alpine.sh {0}
+      run: |
+        if [ -f ./result/dusklinux.iso ]; then
+          echo "ISO built successfully"
+          ls -lh ./result/dusklinux.iso
+          sha256sum ./result/dusklinux.iso
+        else
+          echo "ISO build failed"
+          exit 1
+        fi
+
+    - name: Upload ISO artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dusklinux-iso
+        path: ./result/dusklinux.iso
+        retention-days: 7
+
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./result/dusklinux.iso
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
