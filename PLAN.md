@@ -144,7 +144,7 @@ Tick a phase when all of its steps are done.
 - [x] **Phase 3** — Build the custom base ISO
 - [x] **Phase 4** — Wire the installer
 - [x] **Phase 5** — Hardening & daily-driver polish
-- [ ] **Phase 6** — Distribution & docs
+- [x] **Phase 6** — Distribution & docs
 
 ---
 
