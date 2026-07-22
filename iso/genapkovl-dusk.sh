@@ -134,6 +134,19 @@ rc_add mount-ro shutdown
 rc_add killprocs shutdown
 rc_add savecache shutdown
 
+# ─── trust the ISO's local package repository ───────────
+# build.sh places the build's signing public key next to this script. Embed it
+# into the rootfs's /etc/apk/keys so the running system trusts /media/cdrom/apks
+# (whose APKINDEX is signed with the matching private key). Without this,
+# post-boot `apk add` from the ISO fails with "UNTRUSTED signature". (The
+# initramfs already trusts it via the modloop-signed key; this covers the
+# running system, mirroring what alpine-keys does for official images.)
+_scriptdir="$(cd "$(dirname "$0")" && pwd)"
+if [ -f "$_scriptdir/dusk-signing.rsa.pub" ]; then
+	mkdir -p "$tmp/etc/apk/keys"
+	cp "$_scriptdir/dusk-signing.rsa.pub" "$tmp/etc/apk/keys/dusk-signing.rsa.pub"
+fi
+
 # ─── package the overlay ────────────────────────────────
 echo "Generated dusklinux overlay for host: $HOSTNAME" >&2
 tar -c -C "$tmp" etc | gzip -9n > "$HOSTNAME.apkovl.tar.gz"

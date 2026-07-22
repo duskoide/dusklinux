@@ -23,9 +23,14 @@ profile_dusk() {
 	kernel_flavors="lts"
 	kernel_addons=
 
-	# Don't sign the kernel module loop (avoids needing $PACKAGER_PRIVKEY).
-	# Signing is only required for official / Secure-Boot Alpine images.
-	modloop_sign=no
+	# Sign the kernel module loop. This MUST stay enabled: it is what makes
+	# build_kernel pass `--apk-pubkey <our-key>` to update-kernel, which embeds
+	# our signing public key into the initramfs. Without it the booted ISO
+	# cannot trust its own local package repo (/media/cdrom/apks): apk rejects
+	# the APKINDEX as UNTRUSTED, alpine-base is never unpacked, and boot fails
+	# with "/sbin/init not found in new root" (then a kernel panic on exit).
+	# Requires PACKAGER_PRIVKEY, which build.sh generates via abuild-keygen.
+	modloop_sign=yes
 
 	# Base packages beyond standard Alpine
 	apks="$apks

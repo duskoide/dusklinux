@@ -49,6 +49,14 @@ done
 if [ -z "$PACKAGER_PRIVKEY" ]; then
     echo "No abuild signing key configured — generating one (non-interactive)..."
     abuild-keygen -a -n
+    # abuild-keygen wrote PACKAGER_PRIVKEY to the config file but not into this
+    # shell; re-read it so the rest of the script (and the pubkey copy below)
+    # can see it.
+    for _conf in /etc/abuild.conf "${ABUILD_CONF:-$HOME/.config/abuild/abuild.conf}"; do
+        if [ -f "$_conf" ]; then
+            . "$_conf"
+        fi
+    done
 fi
 
 # ─── clone aports if needed ─────────────────────────────
@@ -64,6 +72,14 @@ chmod +x "$APORTS_DIR/scripts/mkimg.dusk.sh"
 
 cp "$SCRIPT_DIR/genapkovl-dusk.sh" "$APORTS_DIR/scripts/genapkovl-dusk.sh"
 chmod +x "$APORTS_DIR/scripts/genapkovl-dusk.sh"
+
+# Drop the build's signing public key next to the overlay script. The overlay
+# (genapkovl-dusk.sh) embeds it into the rootfs's /etc/apk/keys so the *running*
+# system trusts the ISO's local package repo (/media/cdrom/apks) post-boot —
+# the initramfs key (handled by modloop signing) only covers boot-time.
+if [ -n "$PACKAGER_PRIVKEY" ] && [ -f "$PACKAGER_PRIVKEY.pub" ]; then
+    cp "$PACKAGER_PRIVKEY.pub" "$APORTS_DIR/scripts/dusk-signing.rsa.pub"
+fi
 
 # ─── build ──────────────────────────────────────────────
 echo "Building dusklinux ISO..."
