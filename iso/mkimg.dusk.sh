@@ -12,6 +12,10 @@ profile_dusk() {
 	image_ext="iso"
 	arch="x86_64"
 	output_format="iso"
+	
+	# Overlay script and hostname (set as variables, not CLI args)
+	apkovl="genapkovl-dusk.sh"
+	hostname="dusklinux"
 
 	# LTS kernel — stable, well-supported
 	kernel_flavors="lts"
