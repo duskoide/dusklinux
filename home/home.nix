@@ -1,0 +1,175 @@
+{ config, pkgs, lib, herdr, dmsPackage, ... }:
+
+let
+  dotfiles = "${config.home.homeDirectory}/dotfiles";
+  # Symlink that points at the live dotfiles checkout instead of the nix
+  # store, so files stay editable without a rebuild.
+  link = config.lib.file.mkOutOfStoreSymlink;
+in
+{
+  home.username = "pn";
+  home.homeDirectory = "/home/pn";
+  home.stateVersion = "24.11";
+
+  # Non-NixOS (Alpine) integration: locales, etc.
+  targets.genericLinux.enable = true;
+
+  home.packages =
+    with pkgs;
+    [
+      # dev toolchains
+      nodejs
+      openjdk25
+      python311
+      python311Packages.pip
+      rustup
+      bun
+
+      # cli utilities
+      ripgrep
+      fd
+      fzf
+      jq
+      gum
+      eza
+      bat
+      delta
+      glow
+      stylua
+      shellcheck
+      shfmt
+      tty-clock
+      pnpm
+      turso-cli
+      sqld
+
+      # terminal apps
+      btop
+      fastfetch
+      lazygit
+      helix
+      yazi
+      neovim
+      github-cli
+      zellij
+      rofi
+      herdr.packages.${pkgs.system}.default
+
+      # desktop: terminal + compositor
+      kitty # terminal (TERMINAL=kitty)
+      niri # scrollable-tiling Wayland compositor
+    ]
+    ++ [
+      # DankMaterialShell (includes quickshell as dependency)
+      dmsPackage
+    ];
+
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+    SUDO_EDITOR = "nvim";
+    TERMINAL = "kitty";
+    # TODO: Phase 5 — pick native browser (Firefox or Zen from nixpkgs)
+    BROWSER = "firefox";
+    NPM_CONFIG_PREFIX = "${config.home.homeDirectory}/.npm-global";
+    PAGER = "bat";
+    MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+    FZF_DEFAULT_OPTS =
+      "--info=inline-right --ansi --layout=reverse --border=rounded "
+      + "--color=border:#27a1b9 --color=fg:#c0caf5 --color=gutter:#16161e "
+      + "--color=header:#ff9e64 --color=hl+:#2ac3de --color=hl:#2ac3de "
+      + "--color=info:#545c7e --color=marker:#ff007c --color=pointer:#ff007c "
+      + "--color=prompt:#2ac3de --color=query:#c0caf5:regular "
+      + "--color=scrollbar:#27a1b9 --color=separator:#ff9e64 --color=spinner:#ff007c";
+  };
+
+  # nix store is immutable; give npm a writable global prefix + PATH
+  home.sessionPath = [
+    "${config.home.homeDirectory}/.npm-global/bin"
+    "${config.home.homeDirectory}/.local/bin"
+    "${config.home.homeDirectory}/.cargo/bin"
+  ];
+
+  # Dotfiles repo configs, linked into place by home-manager.
+  # Edit in ~/dotfiles, no rebuild needed.
+  # ~/.zsh itself stays a real directory (HM puts zsh plugins in ~/.zsh/plugins),
+  # so the repo files are linked individually. secrets.zsh stays out of the
+  # nix store this way, and .zsh_history lives in the real dir.
+  home.file.".zsh/.p10k.zsh".source = link "${dotfiles}/shell/.zsh/.p10k.zsh";
+  home.file.".zsh/functions.zsh".source = link "${dotfiles}/shell/.zsh/functions.zsh";
+  home.file.".zsh/secrets.zsh".source = link "${dotfiles}/shell/.zsh/secrets.zsh";
+
+  xdg = {
+    enable = true;
+
+    configFile = {
+      # niri compositor config
+      "niri/config.kdl".source = ./niri/config.kdl;
+
+      # Dotfiles repo configs, linked into place by home-manager.
+      nvim.source = link "${dotfiles}/nvim/.config/nvim";
+      helix.source = link "${dotfiles}/helix/.config/helix";
+      yazi.source = link "${dotfiles}/yazi/.config/yazi";
+      btop.source = link "${dotfiles}/btop/.config/btop";
+      fastfetch.source = link "${dotfiles}/fastfetch/.config/fastfetch";
+      lazygit.source = link "${dotfiles}/lazygit/.config/lazygit";
+      kitty.source = link "${dotfiles}/kitty/.config/kitty";
+      opencode.source = link "${dotfiles}/opencode/.config/opencode";
+    };
+  };
+
+  # Default web browser — placeholder for Phase 5 (native browser selection)
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "x-scheme-handler/http" = "firefox.desktop";
+      "x-scheme-handler/https" = "firefox.desktop";
+      "x-scheme-handler/chrome" = "firefox.desktop";
+      "x-scheme-handler/about" = "firefox.desktop";
+      "x-scheme-handler/unknown" = "firefox.desktop";
+      "text/html" = "firefox.desktop";
+      "text/xml" = "firefox.desktop";
+      "application/xhtml+xml" = "firefox.desktop";
+      "application/xml" = "firefox.desktop";
+      "application/vnd.mozilla.xul+xml" = "firefox.desktop";
+      "application/x-extension-htm" = "firefox.desktop";
+      "application/x-extension-html" = "firefox.desktop";
+      "application/x-extension-shtml" = "firefox.desktop";
+      "application/x-extension-xht" = "firefox.desktop";
+      "application/x-extension-xhtml" = "firefox.desktop";
+    };
+  };
+
+  programs.git = {
+    enable = true;
+    settings = {
+      user.name = "Rafi Putra Nugraha";
+      user.email = "rafipeen@gmail.com";
+      credential."https://github.com".helper = [
+        ""
+        "!gh auth git-credential"
+      ];
+      credential."https://gist.github.com".helper = [
+        ""
+        "!gh auth git-credential"
+      ];
+    };
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.home-manager.enable = true;
+}
