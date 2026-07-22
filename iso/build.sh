@@ -64,8 +64,6 @@ cd "$APORTS_DIR"
 ./scripts/mkimage.sh \
     --tag edge \
     --profile dusk \
-    --apkovl "$SCRIPT_DIR/genapkovl-dusk.sh" \
-    --hostname "$HOSTNAME" \
     --arch x86_64 \
     --outdir "$OUTDIR" \
     --repository "https://dl-cdn.alpinelinux.org/alpine/edge/main" \
