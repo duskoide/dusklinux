@@ -64,12 +64,6 @@
       ff = "clr && fastfetch";
       sys = "btop";
 
-      # grub (multi-distro)
-      grubup = "sudo update-grub";
-      susegrub = "sudo grub2-mkconfig -o /boot/grub2/grub.cfg";
-      fedbup = "sudo grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg";
-      dup = "sudo zypper dup -y";
-
       # fzf
       find = ''nvim $(fzf --preview="bat --color=always {}")'';
 
@@ -99,10 +93,10 @@
       iplocal = "ip -br -c a";
       ipexternal = "curl -s ifconfig.me && echo";
 
-      # etc
-      homesw = "home-manager switch --flake /home/pn/.config/home-manager#pn";
-      homeedit = "nvim ~/.config/home-manager/home.nix";
-      shelledit = "nvim ~/.config/home-manager/shell.nix";
+      # dusklinux home-manager
+      homesw = "home-manager switch --flake ~/dusklinux#pn";
+      homeedit = "nvim ~/dusklinux/home/home.nix";
+      shelledit = "nvim ~/dusklinux/home/shell.nix";
     };
 
     plugins = [

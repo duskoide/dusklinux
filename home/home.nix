@@ -62,6 +62,10 @@ in
     ++ [
       # DankMaterialShell (includes quickshell as dependency)
       dmsPackage
+    ]
+    ++ [
+      # Browser (Phase 5: finalize native browser choice)
+      firefox
     ];
 
   home.sessionVariables = {
